@@ -1,69 +1,85 @@
-document.addEventListener("DOMContentLoaded",async (event) => { 
-   const Response = await fetch('https://thesimpsonsapi.com/api/characters');
-
-   const personajesCard = await Response.json()
-
-   const personajesMostrados = personajesCard.results
+document.addEventListener("DOMContentLoaded", async (event) => { 
+    try {
+        const Response = await fetch('https://thesimpsonsapi.com/api/characters');
 
 
-   const personajesElement = document.querySelector("#cardPersonaje")
+        if (!Response.ok) {
+            throw new Error("Error al conectar con la API");
+        }
 
-    personajesMostrados.forEach(cardPersonaje => {
-        personajesElement.innerHTML +=
-        ` <div class="col-12 col-md-4">
-            <div class="card" style="width: 18rem">
-              <img src="https://cdn.thesimpsonsapi.com/500${cardPersonaje.portrait_path}" class="card-img-top" alt="${cardPersonaje.name}"/>
-              <div class="card-body">
-                <h5 class="card-title">${cardPersonaje.name}</h5>
-                <p class="card-text">
-                  ${cardPersonaje.occupation}
-                </p>
-                <p class="card-text">
-                  ${cardPersonaje.status}
-                </p>
-                <a href="#" class="btn btn-primary">Ver Detalles</a>
-              </div>
-            </div>
-          </div>`       
-    });
+        const personajesCard = await Response.json();
+        const personajesMostrados = personajesCard.results;
+        const personajesElement = document.querySelector("#cardPersonaje");
 
-   const busquedaPersonaje = document.querySelector("#busquedaPersonaje")
+   
+        personajesMostrados.forEach(cardPersonaje => {
+            personajesElement.innerHTML +=
+            ` <div class="col-12 col-md-4">
+                <div class="card" style="width: 18rem">
+                  <img src="https://cdn.thesimpsonsapi.com/500${cardPersonaje.portrait_path}" class="card-img-top" alt="${cardPersonaje.name}"/>
+                  <div class="card-body">
+                    <h5 class="card-title">${cardPersonaje.name}</h5>
+                    <p class="card-text">
+                      ${cardPersonaje.occupation}
+                    </p>
+                    <p class="card-text">
+                      ${cardPersonaje.status}
+                    </p>
+                    <a href="#" class="btn btn-primary">Ver Detalles</a>
+                  </div>
+                </div>
+              </div>`       
+        });
 
-   busquedaPersonaje.addEventListener('input', (event)=>{
-    
-    const textUser = event.target.value.toLowerCase()
+        const busquedaPersonaje = document.querySelector("#busquedaPersonaje");
 
 
-    const personajeResultados = personajesMostrados.filter( (cardPersonaje)=>{
-        return cardPersonaje.name.toLowerCase().includes(textUser)
-    })
-    console.log(textUser)
+        busquedaPersonaje.addEventListener('input', (event)=>{
+        
+            const textUser = event.target.value.toLowerCase();
 
-    personajesElement.innerHTML = "";
+            const personajeResultados = personajesMostrados.filter( (cardPersonaje)=>{
+                return cardPersonaje.name.toLowerCase().includes(textUser);
+            });
+            console.log(textUser);
 
-    if(personajeResultados.length===0){
-        personajesElement.innerHTML=
-        `<div class="col-12 text-center mt-5">
-            <h3 class="text-muted">No se encontraron personajes para tu búsqueda</h3>
-        </div>`
-    } else{personajeResultados.forEach(cardPersonaje=>{
-        personajesElement.innerHTML +=
-        ` <div class="col-12 col-md-4">
-            <div class="card" style="width: 18rem">
-              <img src="https://cdn.thesimpsonsapi.com/500${cardPersonaje.portrait_path}" class="card-img-top" alt="${cardPersonaje.name}"/>
-              <div class="card-body">
-                <h5 class="card-title">${cardPersonaje.name}</h5>
-                <p class="card-text">
-                  ${cardPersonaje.occupation}
-                </p>
-                <p class="card-text">
-                  ${cardPersonaje.status}
-                </p>
-                <a href="#" class="btn btn-primary">Ver Detalles</a>
-              </div>
-            </div>
-          </div>` })
-    }
-   }) 
+            personajesElement.innerHTML = "";
+
+            if(personajeResultados.length===0){
+                personajesElement.innerHTML=
+                `<div class="col-12 text-center mt-5">
+                    <h3 class="text-muted">No se encontraron personajes para tu búsqueda</h3>
+                </div>`;
+            } else {
+                personajeResultados.forEach(cardPersonaje=>{
+                    personajesElement.innerHTML +=
+                    ` <div class="col-12 col-md-4">
+                        <div class="card" style="width: 18rem">
+                          <img src="https://cdn.thesimpsonsapi.com/500${cardPersonaje.portrait_path}" class="card-img-top" alt="${cardPersonaje.name}"/>
+                          <div class="card-body">
+                            <h5 class="card-title">${cardPersonaje.name}</h5>
+                            <p class="card-text">
+                              ${cardPersonaje.occupation}
+                            </p>
+                            <p class="card-text">
+                              ${cardPersonaje.status}
+                            </p>
+                            <a href="#" class="btn btn-primary">Ver Detalles</a>
+                          </div>
+                        </div>
+                      </div>`;
+                });
+            }
+        }); 
+
   
-})
+    } catch (error) {
+        console.error("Hubo un error de red:", error);
+
+        document.querySelector("#cardPersonaje").innerHTML = 
+        `<div class="col-12 text-center mt-5">
+            <h3 class="text-danger">🔌 Error de conexión. No se pudieron cargar los personajes.</h3>
+        </div>`;
+    }
+  
+});
