@@ -34,18 +34,19 @@ document.addEventListener("DOMContentLoaded",async (event) => {
     const textUser = event.target.value.toLowerCase()
 
 
-    const personasjeResultados = personajesMostrados.filter( (cardPersonaje)=>{
+    const personajeResultados = personajesMostrados.filter( (cardPersonaje)=>{
         return cardPersonaje.name.toLowerCase().includes(textUser)
     })
     console.log(textUser)
 
     personajesElement.innerHTML = "";
 
-    if(personajesElement.lenght===0){
+    if(personajeResultados.length===0){
+        personajesElement.innerHTML=
         `<div class="col-12 text-center mt-5">
-            <h3 class="text-muted">No se encontraron personajes para tu búsqueda </h3>
-        </div>`;
-    } else{personasjeResultados.forEach(cardPersonaje=>{
+            <h3 class="text-muted">No se encontraron personajes para tu búsqueda</h3>
+        </div>`
+    } else{personajeResultados.forEach(cardPersonaje=>{
         personajesElement.innerHTML +=
         ` <div class="col-12 col-md-4">
             <div class="card" style="width: 18rem">
